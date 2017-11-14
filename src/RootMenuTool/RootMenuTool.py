@@ -99,6 +99,7 @@ def IsSpecify(inLine):
 
 def GetIndex(inList, tabCount):
 	'''
+	查找tab数与tabCount相同的 
 	:param inList: 
 	:return: 
 	'''
@@ -209,7 +210,7 @@ def Filter():
 			lineList  = inFile.readlines()
 			for i in range(len(lineList)):
 				if Judge(lineList[i]):
-					DelOneTab(lineList, i)   #将从下表i开始, 到tab键小于或等于这一行的tab键的某行结束
+					DelOneTab(lineList, i)   #将从下标i开始, 到tab键小于或等于这一行的tab键的某行结束
 					continue
 				if IsSpecify(lineList[i]):
 					if (lineList[i].strip() == "变速器" ) and ("<0x" in lineList[i + 1]):
@@ -226,7 +227,7 @@ def Filter():
 						pass
 					else:
 						SpecifyDeal(lineList, i)
-						DelOneTab(lineList, i)   #将从下表i开始, 到tab键小于或等于这一行的tab键的某行结束
+						DelOneTab(lineList, i)   #将从下标i开始, 到tab键小于或等于这一行的tab键的某行结束
 						continue
 				outFile.write(lineList[i])
 
@@ -237,8 +238,6 @@ def Filter():
 
 
 def main():
-
-
 
 	with open("../../txt/DelMenuName.txt", "r") as inFile:
 		while True:

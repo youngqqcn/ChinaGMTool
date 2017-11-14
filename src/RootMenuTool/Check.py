@@ -42,7 +42,7 @@ def Check(fileName, inList):
 
 def main():
 
-	menuDir = "../../doc/tmp/RootMenu/"
+	menuDir = "../../doc/tmp/RootMenu_New/"
 	for eachFileName in os.listdir(menuDir) :
 
 		with open(os.path.join(menuDir, eachFileName), "r") as inFile:
