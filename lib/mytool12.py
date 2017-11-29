@@ -1,20 +1,18 @@
 #! coding:utf8
 
-# version 11 , update time: 2017/9/26
+# version 12 , update time: 2017/11/21
 # update description :
-#    在TabTextTool中增加了文件是否存在的判断,如果文件不存在,则引发异常
+#      使用 "类" 重写TextTool
+#	    优化ReadText函数
 
 
 
 import re
 import os
-from collections import OrderedDict   #有序字典
-
-
+from collections import OrderedDict  # 有序字典
 
 
 class TextTool:
-
 	'''
 	# TextTool说明:
 	# 段(section): 从段ID加上'\"'开始到'\n"'结束 
@@ -123,14 +121,14 @@ class TextTool:
 				print ('\n')
 		pass
 
-	def WriteFile(self, filePath ):
+	def WriteFile(self, filePath):
 		'''
 		此方法主要用于, 修改值之后, 写回文件
 		:param filePath: 输出文件路径
 		:return: 
 		'''
 
-		#if not os.path.exists(os.path.dirname(filePath)):
+		# if not os.path.exists(os.path.dirname(filePath)):
 		#	os.mkdir(os.path.dirname(filePath)) #如果目录不存在则创建
 
 		if self.__filePath.strip() == filePath.strip():
@@ -142,18 +140,18 @@ class TextTool:
 				allSectDict = self.allSectDictOfFile
 				for sectKey in allSectDict:
 					sectDict = allSectDict[sectKey]
-					#print ('{0}'.format(sectKey))
-					outFile.write('{0}\t\t\"\\\n'.format(sectKey))  #索引
+					# print ('{0}'.format(sectKey))
+					outFile.write('{0}\t\t\"\\\n'.format(sectKey))  # 索引
 					for filedKey in sectDict:
-						suffix = '\t'*5 + '\\n\\\n'
+						suffix = '\t' * 5 + '\\n\\\n'
 						filedDict = sectDict[filedKey]
-						#print ('[{0}]'.format(filedKey))
-						outFile.write('[{0}]{1}'.format(filedKey, suffix)) #域名
+						# print ('[{0}]'.format(filedKey))
+						outFile.write('[{0}]{1}'.format(filedKey, suffix))  # 域名
 						for keyPairKey in filedDict:
 							for listItem in filedDict[keyPairKey]:
-								#print('{0}={1}'.format(keyPairKey, listItem))
-								outFile.write('\t{0}={1}{2}'.format(keyPairKey, listItem, suffix)) #键值对
-					outFile.write("{0}".format('\t'*5 + '\\n\"\n\n'))
+								# print('{0}={1}'.format(keyPairKey, listItem))
+								outFile.write('\t{0}={1}{2}'.format(keyPairKey, listItem, suffix))  # 键值对
+					outFile.write("{0}".format('\t' * 5 + '\\n\"\n\n'))
 			pass
 		else:
 			print("Dir not exist!")
@@ -172,6 +170,7 @@ class TabTextTool:
 		'''
 		自定义一个异常类
 		'''
+
 		def __init__(self, arg):
 			# print(arg)
 			self.message = "Length Not Matching!"
@@ -190,7 +189,7 @@ class TabTextTool:
 		:return: 
 		'''
 		retList = []
-		if not os.path.exists(inFilePath):  #文件不存在, 引发异常
+		if not os.path.exists(inFilePath):  # 文件不存在, 引发异常
 			print("inFilePath not exists")
 			raise ValueError
 		if os.path.isfile(inFilePath):
@@ -209,7 +208,6 @@ class TabTextTool:
 				pass
 		return retList
 
-
 	def __AddFieldName(self, allSplitedLineList, inFieldNameList):
 		'''
 		:param allSplitedLineList:  
@@ -226,15 +224,13 @@ class TabTextTool:
 				# 引发一个自定义异常
 				print(len(eachLine))
 				print(len(inFieldNameList))
-				raise self.LengthNotMatchError(inFieldNameList)   #key的数量和value的数量不匹配,异常
+				raise self.LengthNotMatchError(inFieldNameList)  # key的数量和value的数量不匹配,异常
 
 			tmpLineDict = OrderedDict()
 			for i in range(len(eachLine)):
 				tmpLineDict[inFieldNameList[i]] = eachLine[i]
 			retList.append(tmpLineDict)
 		return retList
-
-
 
 	def WriteFile(self, outFilePath):
 		'''
@@ -256,8 +252,6 @@ class TabTextTool:
 						outFile.write("\t{0}={1}\n".format(eachFieldName, eachFieldValue))
 		pass
 
-
-
 	def ShowAll(self):
 		inList = self.allSplitedLineList
 		for eachLine in inList:
@@ -266,14 +260,12 @@ class TabTextTool:
 				print("{0}={1}\n".format("????", eachField))
 
 
-
-
 class RootMenu:
 	'''
 	RootMenu说明: 使用此类时, root菜单文件的首行必须是"车名", 
 	             如果有多个"车"(不是车型), 则只要把
 	             __init__函数中, lineList.remove(lineList[0]) 注释掉即可
-	
+
 	数据结构:
 	{
 	车名1: 
@@ -290,7 +282,7 @@ class RootMenu:
 				{
 				}
 			},  
-			
+
 			车型2 : {},
 		}
 	车名2:
@@ -298,8 +290,8 @@ class RootMenu:
 			...
 		}
 	}
-	
-	
+
+
 	'''
 
 	def __init__(self, inFilePath, isOrder=True):
@@ -307,16 +299,16 @@ class RootMenu:
 			with open(inFilePath, "r") as inFile:
 				lineList = inFile.readlines()
 
-				#lineList.remove(lineList[0]) #去掉首行的车名, 如果有多个车(不是车型, 如: 高低配),注释这句即可
+				# lineList.remove(lineList[0]) #去掉首行的车名, 如果有多个车(不是车型, 如: 高低配),注释这句即可
 
-				self.__isOrder = isOrder  #True表示按照插入顺序排序(速度慢), False则为无序(速度快)
+				self.__isOrder = isOrder  # True表示按照插入顺序排序(速度慢), False则为无序(速度快)
 				if self.__isOrder:
-					self.menuDict= OrderedDict()    #菜单树,(有序)
+					self.menuDict = OrderedDict()  # 菜单树,(有序)
 				else:
-					self.menuDict= {}    #菜单树,(无序)
+					self.menuDict = {}  # 菜单树,(无序)
 				self.__AddMenuItem(self.menuDict, lineList)
 				# print(len(retDict))
-				#ShowAll(retDict, 0)
+				# ShowAll(retDict, 0)
 				pass
 		else:
 			raise ValueError
@@ -341,9 +333,9 @@ class RootMenu:
 			nodeList.remove(nodeList[0])
 		else:
 			if self.__isOrder:
-				tmpDict = OrderedDict()  #有序字典
+				tmpDict = OrderedDict()  # 有序字典
 			else:
-				tmpDict = {} #无序字典
+				tmpDict = {}  # 无序字典
 
 			tmpNode = nodeList[0]
 			subNodeList = self.__GetSubNode(nodeList)
@@ -399,7 +391,7 @@ class RootMenu:
 			return [inStr[: inStr.find('<')], inStr[inStr.find('<') + 1: inStr.find('>')]]
 		raise ValueError
 
-	def ShowAll(self, inDict = 'self.menuDict', tabCount = 0):
+	def ShowAll(self, inDict='self.menuDict', tabCount=0):
 		'''
 		:param inDict:  root菜单树(字典)
 		:param tabCount: 缩进的tab数量
@@ -425,8 +417,6 @@ class RootMenu:
 		pass
 
 
-
-
 def ReadText(inFilePath, tabCount=2):
 	'''
 		:param inFilePath: 读inFilePath文件, 如CN_TEXT.txt
@@ -438,15 +428,44 @@ def ReadText(inFilePath, tabCount=2):
 		# retLanDict = {}
 		retLanDict = OrderedDict()
 		for line in linesList:
+			if('\t') not in line:
+				continue
 			if line != "\n":
 				key = line.split("\t" * tabCount)[0]
 				tmpStr = line.split("\t" * tabCount)[1]
 				value = tmpStr[tmpStr.find("\"") + 1: tmpStr.rfind("\"")].strip()
 				retLanDict[key] = value
 		return retLanDict
+	else:
+		print(inFilePath + u"不是文件! 或者不存在! ")
+		raise ValueError
 
 
-def ReadTextPlus(inFilePath):
+# def ReadTextPlus(inFilePath):
+# 	'''
+# 		:param inFilePath: 读inFilePath文件, 如CN_TEXT.txt
+# 		:return: 返回一个字典(按插入顺序排序)
+# 	'''
+# 	if os.path.isfile(inFilePath):
+# 		with open(inFilePath, "r") as lan:
+# 			linesList = lan.readlines()
+# 		# retLanDict = {}
+# 		retDict = OrderedDict()
+# 		for line in linesList:
+# 			if line != "\n":
+# 				fieldCount = len(line.split('\t\t'))
+# 				key = line.split("\t\t")[0]
+# 				valueList = line.split('\t\t')[1:]
+# 				newValueList = []
+# 				for value in valueList:
+# 					if (value[0] == '"') & (value[-1] == '"'):
+# 						newValueList.append(value[1:-1])
+# 					else:
+# 						newValueList.append(value)
+# 				retDict[key] = newValueList
+# 		return retDict
+
+def ReadTextPlus(inFilePath, tabCount=2):
 	'''
 		:param inFilePath: 读inFilePath文件, 如CN_TEXT.txt
 		:return: 返回一个字典(按插入顺序排序)
@@ -454,13 +473,14 @@ def ReadTextPlus(inFilePath):
 	if os.path.isfile(inFilePath):
 		with open(inFilePath, "r") as lan:
 			linesList = lan.readlines()
-		# retLanDict = {}
+		# retDict = {}
 		retDict = OrderedDict()
 		for line in linesList:
 			if line != "\n":
-				fieldCount = len(line.split('\t\t'))
-				key = line.split("\t\t")[0]
-				valueList = line.split('\t\t')[1:]
+				splitStr = tabCount * '\t'
+				fieldCount = len(line.split(splitStr))
+				key = line.split(splitStr)[0]
+				valueList = line.split(splitStr)[1:]
 				newValueList = []
 				for value in valueList:
 					if (value[0] == '"') & (value[-1] == '"'):
@@ -471,15 +491,14 @@ def ReadTextPlus(inFilePath):
 		return retDict
 
 
-
 def Add0x(inStr):
 	'''
 	:param inStr: 例如:   0022334455    
 	:return: 返回 0x00,0x22,0x33,0x44,0x55
 	'''
-	inStr = inStr.strip() #去除空白符
+	inStr = inStr.strip()  # 去除空白符
 	if (len(inStr) & 1):  # 输入的是奇数
-		print(">>>>"+inStr)
+		print(">>>>" + inStr)
 		raise ValueError
 	else:
 		return ''.join("0x" + inStr[i * 2: i * 2 + 2] + "," for i in range(len(inStr) / 2))[0: -1]
@@ -523,22 +542,20 @@ def MyHexPlus(inArg):
 	return Add0x(tmpStr)
 
 
-
 def MyHexPlusPlus(inArg, fillLength=1):
 	'''
 	:param inArg: 将一个整数, 或者十进制整数字符串转换为0xAB类型的 
 	:param fillLength :  填充到多少个字节 
 	:return: 
 	'''
-	if(int(str(inArg), 10) <= (2<<(fillLength*8-1))-1):
+	if (int(str(inArg), 10) <= (2 << (fillLength * 8 - 1)) - 1):
 		tmpLen = len(hex(int(str(inArg), 10))[2:].upper())
-		return Add0x('0'*(2*fillLength - tmpLen) + hex(int(str(inArg), 10))[2:].upper())
+		return Add0x('0' * (2 * fillLength - tmpLen) + hex(int(str(inArg), 10))[2:].upper())
 
 	tmpStr = hex(int(str(inArg), 10))[2:].upper()
 	if (len(tmpStr) & 1):
 		tmpStr = '0' + tmpStr
 	return Add0x(tmpStr)
-
 
 
 def ShowMessageBox(titleText, contentText):
@@ -551,3 +568,44 @@ def ShowMessageBox(titleText, contentText):
 	from tkMessageBox import showinfo
 	showinfo(titleText, contentText)
 	pass
+
+
+
+def DictKVInvert(inDict, isOrder=False):
+	'''
+	字典键值互换
+	:param inDict: 
+	:return: 
+	'''
+	if isOrder:
+		retDict = OrderedDict()
+	else:
+		retDict = dict()
+
+	for k, v in inDict.items():
+		retDict[v] = k
+	return retDict
+
+
+
+def GetTextFromTextLib(indexKey, retOfReadTextPlus):
+	'''
+	从textFilePath获取文本 
+	(适用于 以tab分隔的文本库, 如： cn_text.txt  express.txt  ...)
+	:param indexKey:   带0x的索引 或者 不带 0x 的索引
+	:param textFilePath:  文本库的路径 
+	:param tabCount: 文本库 分隔 tab的数量
+	:return:  list
+	'''
+	retDict = retOfReadTextPlus
+	if('0x' in indexKey):
+		index = Add0x(Del0x(indexKey))
+	else:
+		index = Add0x(indexKey)
+	if(index in retDict):
+		return retDict[index]
+	else:
+		return []   #空列表
+
+
+
