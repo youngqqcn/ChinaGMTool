@@ -417,7 +417,47 @@ class RootMenu:
 		pass
 
 
-def ReadText(inFilePath, tabCount=2):
+	def HereditaryTraverse(self, inDict='self.menuDict', preStr='', separator='\t',
+	                       leafNodeType=list , outFileObj=None):
+		'''
+		遗传遍历
+		
+		每次都从根开始遍历,  即保存"祖先"的信息 , 我称之为 "遗传遍历"
+		
+		使用这个函数, 可以直接将菜单转换为 <<车型表>>
+		
+		:param inDict:  输入字典
+		:param preStr: 祖先信息
+		:param separator: 分隔符
+		:param leafNodeType: 保存叶子节点的"容器" 一般为 list
+		:param outFileObj: 输出文件对象
+		:return: 无
+		'''
+		if inDict == 'self.menuDict':
+			inDict = eval(inDict) #将字符串转换为对应的变量
+
+		if isinstance(inDict, leafNodeType):   #递归终止条件
+			for item in inDict:
+				print("{0}{1}".format(preStr,  item))
+				if isinstance(outFileObj, file):
+					#outFileObj.write("{0}{1}\n".format(preStr,  item)) #EcuId 放后面
+					outFileObj.write("{0}\t{1}\n".format( item, preStr))  #EcuId 放前面
+			return
+
+		elif isinstance(inDict, dict):
+			for k, v in inDict.items():
+				tmpPreStr = preStr + k + separator
+				self.HereditaryTraverse(v, preStr=tmpPreStr,  outFileObj=outFileObj)    #递归
+		else:
+			pass
+		pass
+
+
+
+
+
+
+def ReadText(inFilePath, tabCount):
 	'''
 		:param inFilePath: 读inFilePath文件, 如CN_TEXT.txt
 		:return: 返回一个字典(按插入顺序排序)
@@ -465,7 +505,7 @@ def ReadText(inFilePath, tabCount=2):
 # 				retDict[key] = newValueList
 # 		return retDict
 
-def ReadTextPlus(inFilePath, tabCount=2):
+def ReadTextPlus(inFilePath, tabCount):
 	'''
 		:param inFilePath: 读inFilePath文件, 如CN_TEXT.txt
 		:return: 返回一个字典(按插入顺序排序)
@@ -606,6 +646,69 @@ def GetTextFromTextLib(indexKey, retOfReadTextPlus):
 		return retDict[index]
 	else:
 		return []   #空列表
+
+
+
+def JoinDir(inFileDir,  outFilePath=""):
+	'''
+	将一个目录下的所有文件合并成一个文件
+	:param inFileDir: 
+	:param outFileName: 
+	:return: 
+	'''
+	if not os.path.exists(inFileDir):
+		print("inFileDir is not exists")
+		raise  ValueError
+
+	if outFilePath == "":
+		print("outFilePath is empty")
+		raise  ValueError
+
+	#if  not os.path.exists( os.path.join(outFilePath, outFileName) ):
+	#	raise ValueError
+
+	with open(outFilePath, "w") as joinedFile:
+		for  eachFileName in os.listdir(inFileDir):
+			eachFilePath = os.path.join(inFileDir, eachFileName)
+			with open(eachFilePath, "r") as inFile:
+				tmpLinesList = inFile.readlines()
+				joinedFile.writelines(tmpLinesList)
+
+	pass
+
+
+
+#
+# def JoinTwoFile(fileName1, fileName2, outFilePath):
+# 	'''
+#
+# 	:param fileName1: 待合并的文件1
+# 	:param fileName2: 待合并的文件2
+# 	:param outFilePath: 已合并的文件
+# 	:return:
+# 	'''
+#
+# 	with open(fileName1, "r") as inFile1, open(fileName2, "r") as inFile2,\
+# 		open(outFilePath, "w") as outFile:
+# 		lines1 = inFile1.readlines()
+# 		lines2 = inFile2.readlines()
+#
+# 		outFile.writelines(lines1)
+# 		outFile.writelines(lines2)
+#
+# 	pass
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
