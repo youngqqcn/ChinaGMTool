@@ -699,7 +699,12 @@ def JoinDir(inFileDir,  outFilePath=""):
 # 	pass
 
 
+def InList(inStr, inList):
 
+	for item in  inList:
+		if item in inStr:
+			return True
+	return False
 
 
 

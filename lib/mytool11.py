@@ -438,9 +438,16 @@ def ReadText(inFilePath, tabCount=2):
 		# retLanDict = {}
 		retLanDict = OrderedDict()
 		for line in linesList:
+			tc = line.count('\t')   #以实际的tab数为准
+			if(tc == 0):
+				continue
 			if line != "\n":
-				key = line.split("\t" * tabCount)[0]
-				tmpStr = line.split("\t" * tabCount)[1]
+				try:
+					key = line.split("\t" * tc)[0]
+					tmpStr = line.split("\t" * tc)[1]
+				except:
+					print(line)
+					continue
 				value = tmpStr[tmpStr.find("\"") + 1: tmpStr.rfind("\"")].strip()
 				retLanDict[key] = value
 		return retLanDict

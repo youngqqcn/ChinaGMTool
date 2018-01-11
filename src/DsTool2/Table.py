@@ -42,13 +42,13 @@ gT1DsTT = TextTool(u"../../txt/中国通用/Type1/Ds.txt")
 gT1InfoTT = TextTool(u"../../txt/中国通用/Type1/Information.txt")
 
 
-gThreadCount = 128
+gThreadCount = 256
 gLinesList = []
 gThreadOutputPath = u"../../doc/tmp/threadOutput"
 
 gOutputDict = {}
 
-gOutputFilePath = u"../../doc/tmp/中国通用车型表_1206_2.txt"
+gOutputFilePath = u"../../doc/tmp/中国通用车型表_1208.txt"
 
 def Type1_DTC(index):
 
@@ -87,6 +87,27 @@ def Type1_DS(index):
 	return prot
 
 
+def Type1_VerInfo(index):
+
+	prot = ''
+
+	d = gT1InfoTT.allSectDictOfFile
+
+	if index in d:
+
+		if "Protocol" in d[index]:
+			try:
+				prot = d[index]["Protocol"]["Protocol"][0].strip()
+				# print(u"数据流{0}".format(prot))
+				pass
+			except:
+				prot = ""
+				pass
+		else:
+			print("no protocol")
+	return prot
+
+
 
 def Type1(nextId):
 
@@ -103,6 +124,7 @@ def Type1(nextId):
 		#读数据流
 		pass
 	elif funcType in ["00000700", "00001000"]:
+		return  Type1_VerInfo(Add0x(index))
 		#版本信息
 		pass
 	else:
@@ -158,7 +180,12 @@ def GetProtocolTypeByEcuID(ecuId):
 			#type1
 			pass
 
-	return retProtocol
+		index = nextId[8:].strip() + "000000" + nextId[6:8]
+
+	else:
+		index = "  "
+
+	return retProtocol, index
 
 
 
@@ -175,15 +202,15 @@ def main():
 		lines = inFile.readlines()
 		for line in lines:
 			ecuId = line.split('\t')[0]
-			protocolType =  GetProtocolTypeByEcuID(ecuId)
+			protocolType, index =  GetProtocolTypeByEcuID(ecuId)
 			#print(protocolType)
 
 			if isinstance(protocolType, str) :
 				if len(protocolType) == 0:
 					protocolType = "  "
-				outFile.write("{0}".format(protocolType +"\t"+ line))
+				outFile.write("{0}".format(index + "\t"+ protocolType +"\t"+ line))
 			else:
-				outFile.write("{0}".format("   " + "\t" + line))
+				outFile.write("{0}".format(index + "\t" + "   " + "\t" + line))
 
 	pass
 
@@ -196,17 +223,17 @@ def Process(linesList, threadNo):
 	if (True):
 		for line in lines:
 			ecuId = line.split('\t')[0]
-			protocolType = GetProtocolTypeByEcuID(ecuId)
+			protocolType,index = GetProtocolTypeByEcuID(ecuId)
 			# print(protocolType)
 
 			if isinstance(protocolType, str):
 				if len(protocolType) == 0:
 					protocolType = "  "
 				#outFile.write("{0}".format(protocolType + "\t" + line))
-				gOutputDict[threadNo].append("{0}".format(protocolType + "\t" + line))
+				gOutputDict[threadNo].append("{0}".format(index + "\t"+ protocolType + "\t" + line))
 			else:
 				#outFile.write("{0}".format("   " + "\t" + line))
-				gOutputDict[threadNo].append("{0}".format("  "+ "\t" + line))
+				gOutputDict[threadNo].append("{0}".format(index + "\t" + "  "+ "\t" + line))
 
 	pass
 
