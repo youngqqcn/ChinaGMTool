@@ -13,8 +13,27 @@ gInDir = u"../../txt/中国通用/Type1/Information.txt"
 
 
 
+gSearchFormatList = [
+	"1A",
+	"1B",
+	"1C",
+	"1D",
+	"1E",
+	"1F",
+	"0E",
+	"0D",
+	"0C",
+	"0F",
+	"0A",
+	"36",
+"37",
+"38",
+"39"
+]
+
 
 gSearchFormat = 34
+gFormatList = []
 
 def main():
 
@@ -44,11 +63,20 @@ def main():
 					for i in range(1, num + 1):
 						itemStr = sectDict["INFORMATION"]["Item%02X" % i][0]
 						tmpSplitList = itemStr.split(",")
-						format = int(tmpSplitList[len(tmpSplitList) - 1 ], 10) #获取最后一个
-						#print(format)
-						if format == gSearchFormat:
-							if Del0x(sectKey) in indexList:
-								print(Del0x(sectKey))
+						format = tmpSplitList[len(tmpSplitList) - 1 ] #获取最后一个
+
+						#if False:
+						#	format = int(tmpSplitList[len(tmpSplitList) - 1 ], 10) #获取最后一个
+						#	print(format)
+
+						if True:   #打印gSearchFormatList 中的
+							if format in gSearchFormatList:
+								if Del0x(sectKey) in indexList:
+									print("{0}===>{1}".format(format, Del0x(sectKey)))
+
+						if False:  #打印所有 算法格式
+							if format not in gFormatList:
+								gFormatList.append(format)
 					pass
 				except:
 					pass
@@ -56,6 +84,9 @@ def main():
 			pass
 		except:
 			pass
+
+	for f in gFormatList:
+		print(f)
 
 
 if __name__ == "__main__":
