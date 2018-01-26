@@ -82,11 +82,14 @@ def GetSubLibFlag(inLibIndex):
 	'''
 
 	d = gDtcLib.allSectDictOfFile
+	#print(len(d))
+	#print(d.keys())
 
-	tmpIndex = Add0x("0000" + inLibIndex)
+	tmpIndex = Add0x("0000" + Del0x(inLibIndex).upper())
 
 
 	if tmpIndex in d:
+		#print(tmpIndex)
 		if "SUBLIB" in d[tmpIndex]:
 			print(tmpIndex)
 			return  "1"
@@ -301,7 +304,8 @@ def main():
 	tt =  TextTool(u"../../txt/中国通用/Type1/Dtc.txt")
 	#tt.ShowAll()
 
-	WriteFile(tt.allSectDictOfFile, "../../doc/tmp/DtcTable_12_15.txt")
+	#WriteFile(tt.allSectDictOfFile, "../../doc/tmp/DtcTable_12_15.txt")
+	WriteFile(tt.allSectDictOfFile, "../../doc/tmp/DtcTable_2018_01_19.txt")
 
 
 
